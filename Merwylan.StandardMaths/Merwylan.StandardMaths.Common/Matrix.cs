@@ -1,15 +1,27 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Merwylan.StandardMaths.Common.Exceptions;
+using Merwylan.StandardMaths.Common.Extensions;
 using Merwylan.StandardMaths.Common.Helpers;
 using MiscUtil;
 
 namespace Merwylan.StandardMaths.Common
 {
-    public struct Matrix<T> : IComparable<Matrix<T>> where T:IComparable
+    [Serializable]
+    public struct Matrix<T> : IEquatable<Matrix<T>>
+    #if (!SILVERLIGHT && !WINDOWSPHONE)
+            , ICloneable
+    #endif 
+        where T : IComparable
     {
+        public Matrix(T[,] matrix)
+        {
+            Value = matrix ?? throw new ArgumentNullException();
+        }
+
         /// <summary>
         /// The wrapper value of the matrix.
         /// </summary>
@@ -18,17 +30,26 @@ namespace Merwylan.StandardMaths.Common
         /// <summary>
         /// Returns the identity matrix of the current matrix (the same row length and column width).
         /// </summary>
-        public Matrix<T> IdentityMatrix => GetIdentityMatrix(Value.GetLength(0), Value.GetLength(1));
+        public Matrix<T> IdentityMatrix => this.IsSquare() ? GetIdentityMatrix(Value.GetLength(0), Value.GetLength(1)) 
+                                        : throw new InvalidMatrixOperationException("Identity Matrix must be a square!");
 
-        public bool IsEmpty => Value.Length < 1;
-        public bool IsEmptyOrNull => Value is null || IsEmpty;
+        /// <summary>
+        /// Indicates whether or not the Matrix is empty.
+        /// </summary>
+        public bool IsEmpty => Value is null || Value.Length < 1;
 
-        public Matrix(T[,] matrix)
-        {
-            if(matrix is null) throw new ArgumentNullException();
-            Value = matrix;
-        }
+        /// <summary>
+        /// Gets the total number of elements in all the dimensions of the Matrix
+        /// </summary>
+        public int Length => Value.Length;
 
+        /// <summary>
+        /// Gets a 32-bit integer that represents the number of elements in the specified dimension of the Matrix.
+        /// </summary>
+        /// <param name="dimension"></param>
+        /// <returns></returns>
+        public int GetLength(int dimension) => Value.GetLength(dimension);
+        
         public static Matrix<T> operator +(Matrix<T> firstMatrix, Matrix<T> secondMatrix) =>
             Add(firstMatrix, secondMatrix);
 
@@ -45,6 +66,10 @@ namespace Merwylan.StandardMaths.Common
         /// <returns></returns>
         public static Matrix<T> Add(Matrix<T> firstMatrix, Matrix<T> secondMatrix)
         {
+            if (firstMatrix.Value is null) throw new ArgumentNullException(nameof(firstMatrix));
+            if (secondMatrix.Value is null) throw new ArgumentNullException(nameof(secondMatrix));
+
+
             var firstValue = firstMatrix.Value;
             var secondValue = secondMatrix.Value;
 
@@ -65,6 +90,9 @@ namespace Merwylan.StandardMaths.Common
         /// <returns></returns>
         public static Matrix<T> Subtract(Matrix<T> firstMatrix, Matrix<T> secondMatrix)
         {
+            if (firstMatrix.Value is null) throw new ArgumentNullException(nameof(firstMatrix));
+            if (secondMatrix.Value is null) throw new ArgumentNullException(nameof(secondMatrix));
+
             var firstValue = firstMatrix.Value;
             var secondValue = secondMatrix.Value;
 
@@ -100,6 +128,9 @@ namespace Merwylan.StandardMaths.Common
         /// <returns></returns>
         public static Matrix<T> Multiply(Matrix<T> firstMatrix, Matrix<T> secondMatrix)
         {
+            if (firstMatrix.Value is null) throw new ArgumentNullException(nameof(firstMatrix));
+            if (secondMatrix.Value is null) throw new ArgumentNullException(nameof(secondMatrix));
+
             var firstValue = firstMatrix.Value;
             var secondValue = secondMatrix.Value;
 
@@ -115,7 +146,6 @@ namespace Merwylan.StandardMaths.Common
         private static Matrix<T> Dot(T[,] firstValue, T[,] secondValue)
         {
             // Row length of matrix 1 equals column length of matrix 2
-            int sharedLength = firstValue.GetLength(1);
             int firstMatrixRowSize = firstValue.GetLength(0);
             int secondMatrixColumnSize = secondValue.GetLength(1);
 
@@ -141,11 +171,13 @@ namespace Merwylan.StandardMaths.Common
         /// <returns></returns>
         public static Matrix<T> Power(Matrix<T> matrix, int n)
         {
+            if (matrix.Value is null) throw new ArgumentNullException(nameof(matrix));
+
             if (matrix.IsEmpty) return matrix;
 
             if (n < 0)
                 throw new InvalidMatrixOperationException("Power is not allowed to be lower than 0.");
-            if(matrix.Value.GetLength(0) != matrix.Value.GetLength(1))
+            if(!matrix.IsSquare())
                 throw new InvalidMatrixOperationException("Power operation is only allowed on square matrices.");
 
             return n == 0 ? GetIdentityMatrix(matrix.Value.GetLength(0), matrix.Value.GetLength(1)) : Pow(matrix, n);
@@ -207,14 +239,18 @@ namespace Merwylan.StandardMaths.Common
 
         private static bool IsCellDiagonal(int rowIdx, int columnIdx) => rowIdx == columnIdx;
 
-        public int CompareTo(Matrix<T> obj)
+        public bool Equals(Matrix<T> other)
         {
             var value = Value;
-            var equal =
-                Value.Rank == obj.Value.Rank &&
-                Enumerable.Range(0, Value.Rank).All(dimension => value.GetLength(dimension) == obj.Value.GetLength(dimension)) &&
-                Value.Cast<T>().SequenceEqual(obj.Value.Cast<T>());
-            return equal ? 0 : -1;
+            return Value.Rank == other.Value.Rank &&
+                Enumerable.Range(0, Value.Rank).All(dimension => value.GetLength(dimension) == other.Value.GetLength(dimension)) &&
+                Value.Cast<T>().SequenceEqual(other.Value.Cast<T>());
         }
+
+        public object Clone() => new Matrix<T>(Value);
+
+
+
+
     }
 }
