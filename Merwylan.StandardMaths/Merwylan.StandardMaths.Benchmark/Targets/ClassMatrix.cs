@@ -6,9 +6,9 @@ using Merwylan.StandardMaths.Common.Exceptions;
 using Merwylan.StandardMaths.Common.Helpers;
 using MiscUtil;
 
-namespace Merwylan.StandardMaths.Common
+namespace Merwylan.StandardMaths.Benchmark.Targets
 {
-    public struct Matrix<T> : IComparable<Matrix<T>> where T:IComparable
+    public class Matrix<T> : IComparable<Matrix<T>> where T : IComparable
     {
         /// <summary>
         /// The wrapper value of the matrix.
@@ -25,7 +25,7 @@ namespace Merwylan.StandardMaths.Common
 
         public Matrix(T[,] matrix)
         {
-            if(matrix is null) throw new ArgumentNullException();
+            if (matrix is null) throw new ArgumentNullException();
             Value = matrix;
         }
 
@@ -34,6 +34,7 @@ namespace Merwylan.StandardMaths.Common
 
         public static Matrix<T> operator -(Matrix<T> firstMatrix, Matrix<T> secondMatrix) =>
             Subtract(firstMatrix, secondMatrix);
+
         public static Matrix<T> operator *(Matrix<T> firstMatrix, Matrix<T> secondMatrix) =>
             Multiply(firstMatrix, secondMatrix);
 
@@ -45,13 +46,17 @@ namespace Merwylan.StandardMaths.Common
         /// <returns></returns>
         public static Matrix<T> Add(Matrix<T> firstMatrix, Matrix<T> secondMatrix)
         {
+            if(firstMatrix is null) throw new ArgumentNullException(nameof(firstMatrix));
+            if(secondMatrix is null) throw new ArgumentNullException(nameof(secondMatrix));
+
             var firstValue = firstMatrix.Value;
             var secondValue = secondMatrix.Value;
 
             if (firstValue.GetLength(0) != secondValue.GetLength(0) ||
                 firstValue.GetLength(1) != secondValue.GetLength(1))
             {
-                throw new DifferentDimensionException("Matrices must have the same dimensions to perform an addition operation.");
+                throw new DifferentDimensionException(
+                    "Matrices must have the same dimensions to perform an addition operation.");
             }
 
             return AddOrSubtract(firstValue, secondValue);
@@ -65,6 +70,9 @@ namespace Merwylan.StandardMaths.Common
         /// <returns></returns>
         public static Matrix<T> Subtract(Matrix<T> firstMatrix, Matrix<T> secondMatrix)
         {
+            if (firstMatrix is null) throw new ArgumentNullException(nameof(firstMatrix));
+            if (secondMatrix is null) throw new ArgumentNullException(nameof(secondMatrix));
+
             var firstValue = firstMatrix.Value;
             var secondValue = secondMatrix.Value;
 
@@ -85,13 +93,15 @@ namespace Merwylan.StandardMaths.Common
             {
                 for (var columnIndex = 0; columnIndex < result.GetLength(1); columnIndex++)
                 {
-                    result[rowIndex, columnIndex] = positive ? Operator<T>.Add(result[rowIndex, columnIndex], secondValue[rowIndex, columnIndex]) :
-                        Operator<T>.Subtract(result[rowIndex, columnIndex], secondValue[rowIndex, columnIndex]);
+                    result[rowIndex, columnIndex] = positive
+                        ? Operator<T>.Add(result[rowIndex, columnIndex], secondValue[rowIndex, columnIndex])
+                        : Operator<T>.Subtract(result[rowIndex, columnIndex], secondValue[rowIndex, columnIndex]);
                 }
             }
 
             return new Matrix<T>(result);
         }
+
         /// <summary>
         /// Multiplies two matrices. Column width of first matrix must equal row count of second matrix.
         /// </summary>
@@ -100,6 +110,9 @@ namespace Merwylan.StandardMaths.Common
         /// <returns></returns>
         public static Matrix<T> Multiply(Matrix<T> firstMatrix, Matrix<T> secondMatrix)
         {
+            if (firstMatrix is null) throw new ArgumentNullException(nameof(firstMatrix));
+            if (secondMatrix is null) throw new ArgumentNullException(nameof(secondMatrix));
+
             var firstValue = firstMatrix.Value;
             var secondValue = secondMatrix.Value;
 
@@ -141,11 +154,13 @@ namespace Merwylan.StandardMaths.Common
         /// <returns></returns>
         public static Matrix<T> Power(Matrix<T> matrix, int n)
         {
+            if (matrix is null) throw new ArgumentNullException(nameof(matrix));
+
             if (matrix.IsEmpty) return matrix;
 
             if (n < 0)
                 throw new InvalidMatrixOperationException("Power is not allowed to be lower than 0.");
-            if(matrix.Value.GetLength(0) != matrix.Value.GetLength(1))
+            if (matrix.Value.GetLength(0) != matrix.Value.GetLength(1))
                 throw new InvalidMatrixOperationException("Power operation is only allowed on square matrices.");
 
             return n == 0 ? GetIdentityMatrix(matrix.Value.GetLength(0), matrix.Value.GetLength(1)) : Pow(matrix, n);
@@ -171,7 +186,7 @@ namespace Merwylan.StandardMaths.Common
                 }
             }
 
-            return result*remainder;
+            return result * remainder;
         }
 
         private static Matrix<T> GetIdentityMatrix(int rowCount, int columnCount)
@@ -199,7 +214,8 @@ namespace Merwylan.StandardMaths.Common
 
             for (var cellIndex = 0; cellIndex < firstMatrix.GetLength(1); cellIndex++)
             {
-                temp = Operator.Add<T>(temp, Operator.Multiply<T>(firstMatrix[rowIndex, cellIndex], secondMatrix[cellIndex, columnIndex]));
+                temp = Operator.Add<T>(temp,
+                    Operator.Multiply<T>(firstMatrix[rowIndex, cellIndex], secondMatrix[cellIndex, columnIndex]));
             }
 
             return temp;
@@ -209,10 +225,10 @@ namespace Merwylan.StandardMaths.Common
 
         public int CompareTo(Matrix<T> obj)
         {
-            var value = Value;
             var equal =
                 Value.Rank == obj.Value.Rank &&
-                Enumerable.Range(0, Value.Rank).All(dimension => value.GetLength(dimension) == obj.Value.GetLength(dimension)) &&
+                Enumerable.Range(0, Value.Rank)
+                    .All(dimension => Value.GetLength(dimension) == obj.Value.GetLength(dimension)) &&
                 Value.Cast<T>().SequenceEqual(obj.Value.Cast<T>());
             return equal ? 0 : -1;
         }
