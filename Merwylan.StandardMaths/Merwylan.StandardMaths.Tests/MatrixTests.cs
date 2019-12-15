@@ -26,6 +26,14 @@ namespace Merwylan.StandardMaths.Tests
             Assert.Throws<DifferentDimensionException>(() => Matrix<T>.Add(matrix1, matrix2));
         }
 
+        [ClassData(typeof(StandardArgumentNullMatrices))]
+        [Theory]
+        public void Add_Matrix_Null_Value_Should_Throw_ArgumentNullException<T>(Matrix<T> matrix1,
+            Matrix<T> matrix2) where T : IComparable
+        {
+            Assert.Throws<ArgumentNullException>(() => Matrix<T>.Add(matrix1, matrix2));
+        }
+
         [ClassData(typeof(SubtractionMatrices))]
         [Theory]
         public void Subtract_Matrix_Same_Dimensions_Should_Return_Subtracted_Matrix<T>(Matrix<T> matrix1, Matrix<T> matrix2, Matrix<T> expected) 
@@ -41,6 +49,14 @@ namespace Merwylan.StandardMaths.Tests
             Matrix<T> matrix2) where T : IComparable
         {
             Assert.Throws<DifferentDimensionException>(() => Matrix<T>.Subtract(matrix1, matrix2));
+        }
+
+        [ClassData(typeof(StandardArgumentNullMatrices))]
+        [Theory]
+        public void Subtract_Matrix_Null_Value_Should_Throw_ArgumentNullException<T>(Matrix<T> matrix1,
+            Matrix<T> matrix2) where T : IComparable
+        {
+            Assert.Throws<ArgumentNullException>(() => Matrix<T>.Subtract(matrix1, matrix2));
         }
 
 
@@ -61,6 +77,14 @@ namespace Merwylan.StandardMaths.Tests
             Assert.Throws<DifferentColumnRowLengthException>(() => Matrix<T>.Multiply(matrix1,matrix2));
         }
 
+        [ClassData(typeof(StandardArgumentNullMatrices))]
+        [Theory]
+        public void Multiply_Matrix_Null_Value_Should_Throw_ArgumentNullException<T>(Matrix<T> matrix1,
+            Matrix<T> matrix2) where T : IComparable
+        {
+            Assert.Throws<ArgumentNullException>(() => Matrix<T>.Multiply(matrix1, matrix2));
+        }
+
         [ClassData(typeof(PowerMatrices))]
         [Theory]
         public void Power_Matrix_Square_Should_Return_Powered_Matrix<T>(Matrix<T> matrix, int power, Matrix<T> expected) where T:IComparable
@@ -74,6 +98,14 @@ namespace Merwylan.StandardMaths.Tests
         public void Power_Matrix_NotSquare_Should_Throw_InvalidMatrixOperationException<T>(Matrix<T> matrix, int power) where T:IComparable
         {
             Assert.Throws<InvalidMatrixOperationException>(() => Matrix<T>.Power(matrix,power));
+        }
+
+        [ClassData(typeof(PowerArgumentNullMatrices))]
+        [Theory]
+        public void Power_Matrix_Null_Value_Should_Throw_ArgumentNullException<T>(Matrix<T> matrix,
+            int power) where T : IComparable
+        {
+            Assert.Throws<ArgumentNullException>(() => Matrix<T>.Power(matrix, power));
         }
 
     }

@@ -78,4 +78,40 @@ namespace Merwylan.StandardMaths.Tests.Input.Composed
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 
+    public class StandardArgumentNullMatrices : IEnumerable<object[]>
+    {
+        public IEnumerator<object[]> GetEnumerator()
+        {
+            yield return new object[]
+            {
+                new Matrix<double>(),
+                new Matrix<double>()
+            };
+            yield return new object[]
+            {
+                new Matrix<double>(),
+                new Matrix<double>(new double[,] { {1},{2}})
+            };
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+    public class PowerArgumentNullMatrices : IEnumerable<object[]>
+    {
+        public IEnumerator<object[]> GetEnumerator()
+        {
+            yield return new object[]
+            {
+                new Matrix<double>(),
+                1
+            };
+            yield return new object[]
+            {
+                new Matrix<double>(),
+                0
+            };
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    }
 }

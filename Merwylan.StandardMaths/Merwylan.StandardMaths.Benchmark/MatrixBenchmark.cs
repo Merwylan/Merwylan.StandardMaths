@@ -23,22 +23,14 @@ namespace Merwylan.StandardMaths.Benchmark
 
         public IEnumerable<Matrix<double>> ValuesForAdditionSubtraction => new[]
         {
-            new Matrix<double>(new double[,]{{3},{4}}),
-            new Matrix<double>(new double[,]{{36,12},{-443,435},{3453,234}}),
-            new Matrix<double>(new double[,]{{3},{4},{455},{45234}}),
             new Matrix<double>(new double[,]{{3},{4},{23423},{-1231},{4},{23423},{-1231},{4},{23423},{-1231},{4},{23423},{-1231},
                 {4},{23423},{-1231},{4},{23423},{-1231},{4},{23423},{-1231},{4},{23423},{-1231},{4},{23423},{-1231},{4},{23423},{-1231}}),
-            new Matrix<double>(new double[,]{}),
         };
 
         public IEnumerable<Targets.Matrix<double>> ValuesForTargetAdditionSubtraction => new[]
         {
-            new Targets.Matrix<double>(new double[,]{{3},{4}}),
-            new Targets.Matrix<double>(new double[,]{{36,12},{-443,435},{3453,234}}),
-            new Targets.Matrix<double>(new double[,]{{3},{4},{455},{45234}}),
             new Targets.Matrix<double>(new double[,]{{3},{4},{23423},{-1231},{4},{23423},{-1231},{4},{23423},{-1231},{4},{23423},{-1231},
                 {4},{23423},{-1231},{4},{23423},{-1231},{4},{23423},{-1231},{4},{23423},{-1231},{4},{23423},{-1231},{4},{23423},{-1231}}),
-            new Targets.Matrix<double>(new double[,]{}),
         };
 
         [Benchmark]

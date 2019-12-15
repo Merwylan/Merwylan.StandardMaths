@@ -2,7 +2,7 @@
 
 namespace Merwylan.StandardMaths.Markov
 {
-    public class Class1
+    public struct MarkovChain<T> where T: IEquatable<T>, IComparable
     {
     }
 }
