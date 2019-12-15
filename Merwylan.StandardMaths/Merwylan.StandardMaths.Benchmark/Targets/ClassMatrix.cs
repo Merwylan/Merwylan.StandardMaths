@@ -197,7 +197,7 @@ namespace Merwylan.StandardMaths.Benchmark.Targets
             {
                 for (var j = 0; j < columnCount; j++)
                 {
-                    var one = CommonHelper.TryConvert<T>(1, out var succeeded);
+                    var succeeded = CommonHelper.TryConvert<T>(1, out var one);
 
                     if (!succeeded) throw new Exception("An unexpected exception has been thrown.");
 

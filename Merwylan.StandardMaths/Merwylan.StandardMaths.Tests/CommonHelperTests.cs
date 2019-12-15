@@ -13,7 +13,7 @@ namespace Merwylan.StandardMaths.Tests
         [Theory]
         public void Convert_Integer_To_Double_Should_Convert(int input, double expected)
         {
-            var actual = CommonHelper.TryConvert<double>(input, out var hasConverted);
+            var hasConverted = CommonHelper.TryConvert<double>(input, out var actual);
             Assert.Equal(expected,actual);
             Assert.True(hasConverted);
         }
@@ -22,7 +22,7 @@ namespace Merwylan.StandardMaths.Tests
         [Theory]
         public void Convert_Double_To_Integer_Should_Convert(double input, int expected)
         {
-            var actual = CommonHelper.TryConvert<int>(input, out var hasConverted);
+            var hasConverted = CommonHelper.TryConvert<int>(input, out var actual);
             Assert.Equal(expected, actual);
             Assert.True(hasConverted);
         }

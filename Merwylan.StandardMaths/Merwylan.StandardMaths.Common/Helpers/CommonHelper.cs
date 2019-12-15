@@ -6,21 +6,19 @@ namespace Merwylan.StandardMaths.Common.Helpers
 {
     public static class CommonHelper
     {
-        public static T TryConvert<T>(object value, out bool hasConverted)
+        public static bool TryConvert<T>(object value, out T converted)
         {
-            var converted = default(T);
+            converted = default(T);
 
             try
             {
                 converted = (T)Convert.ChangeType(value, typeof(T));
-                hasConverted = true;
+                return true;
             }
             catch
             {
-                hasConverted = false;
+                return false;
             }
-
-            return converted;
         }
     }
 }
